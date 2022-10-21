@@ -1,15 +1,18 @@
 // use NextJS, MUI, Tailwind, React
 
 // AnswerComponent
-// input: text
+// input: answer
 // output: answer result with h2
+// use MUI Card wrapper each component, with padding, with right margin
 
 
-export default function AnswerComponent({text}: { text: string }) {
+import {Card} from "@mui/material";
+
+export default function AnswerComponent({answer}: { answer: string }) {
   return (
-    <div>
-      <h2>{text}</h2>
-    </div>
+    <Card className="p-4 mr-4">
+      <h2>{answer}</h2>
+    </Card>
   )
 }
 
