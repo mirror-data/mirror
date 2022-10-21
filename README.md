@@ -1,4 +1,4 @@
-# 魔镜🪞 <del>膜镜🕶️</del>
+# 魔镜🪞
 ### 2022 TiDB Hackathon
 
 
