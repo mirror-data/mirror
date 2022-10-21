@@ -10,6 +10,7 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.10",
+    "mysql2": "^2.3.3",
     "next": "latest",
     "react": "18.1.0",
     "react-dom": "18.1.0"
