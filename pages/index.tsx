@@ -45,6 +45,7 @@ import {useState} from "react";
 import AnswerComponent from "../components/Answer";
 import DataTable from "../components/DataTable";
 import SqlSnippet from "../components/SqlSnippet";
+import {fetchChoices} from "../components/datasource";
 
 // NextJS
 // Mui
@@ -54,36 +55,39 @@ import SqlSnippet from "../components/SqlSnippet";
 const Home: NextPage = () => {
 
   const [searchInputValue, setSearchInputValue] = useState("How to get the most popular movie in 2019?")
-  const [answer, setAnswer] = useState("The most popular movie in 2019 is The Avengers.")
-  const [data, setData] = useState("movie_name,release_year\n" +
-    "The Avengers,2019\n" +
-    "The Avengers: Age of Ultron,2015\n" +
-    "Avengers: Infinity War,2018\n" +
-    "Avengers: Endgame,2019\n" +
-    "Captain Marvel,2019\n")
-  const [sql, setSql] = useState("SELECT movie_name, release_year\n" +
-    "FROM movies\n" +
-    "WHERE release_year = 2019\n" +
-    "ORDER BY popularity DESC\n" +
-    "LIMIT 1")
+  const [answer, setAnswer] = useState("")
+  const [data, setData] = useState("")
+  const [sql, setSql] = useState("")
+  const [error, setError] = useState("")
 
   const onSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(event.target.value)
   }
 
   const onSearch = () => {
-    setAnswer("The most popular movie in 2019 is The Avengers.")
-    setData("movie_name,release_year\n" +
-      "The Avengers,2019\n" +
-      "The Avengers: Age of Ultron,2015\n" +
-      "Avengers: Infinity War,2018\n" +
-      "Avengers: Endgame,2019\n" +
-      "Captain Marvel,2019\n")
-    setSql("SELECT movie_name, release_year\n" +
-      "FROM movies\n" +
-      "WHERE release_year = 2019\n" +
-      "ORDER BY popularity DESC\n" +
-      "LIMIT 1")
+    // setAnswer("The most popular movie in 2019 is The Avengers.")
+    // setData("movie_name,release_year\n" +
+    //   "The Avengers,2019\n" +
+    //   "The Avengers: Age of Ultron,2015\n" +
+    //   "Avengers: Infinity War,2018\n" +
+    //   "Avengers: Endgame,2019\n" +
+    //   "Captain Marvel,2019\n")
+    // setSql("SELECT movie_name, release_year\n" +
+    //   "FROM movies\n" +
+    //   "WHERE release_year = 2019\n" +
+    //   "ORDER BY popularity DESC\n" +
+    //   "LIMIT 1")
+    const fn = async () => {
+      const res = await fetchChoices(searchInputValue)
+      if (res.error) {
+        setError(res.error)
+        return
+      }
+
+      setSql(res?.choices?.[0]?.text || "")
+    }
+
+    fn()
   }
 
   return (
@@ -91,7 +95,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Search Page</title>
         <meta name="description" content="Search Page"/>
-        <link rel="icon" href="/favicon.ico"/>
+        <link rel="icon" href="/favicon.svg"/>
       </Head>
 
       <header className="flex flex-row">
@@ -105,6 +109,7 @@ const Home: NextPage = () => {
             variant="standard"
             value={searchInputValue}
             onChange={onSearchInputChange}
+            className="mx-2"
             fullWidth
           />
           <SearchIcon
@@ -115,15 +120,23 @@ const Home: NextPage = () => {
       </header>
 
       <main className="flex flex-col flex-1 p-2 m-2 space-y-2 overflow-auto bg-gray-100">
-        <div className="flex">
-          <div className="flex-1"><AnswerComponent answer={answer}/></div>
-          <div className="flex-1"><DataTable data={data}/></div>
-        </div>
+        {
+          sql &&
+          <>
+            <div className="flex">
+              <div className="flex-1"><AnswerComponent answer={answer}/></div>
+              <div className="flex-1"><DataTable data={data}/></div>
+            </div>
 
-        <Card className="p-2">
-          <SqlSnippet sql={sql}/>
-        </Card>
+            <Card className="p-2">
+              <SqlSnippet sql={sql}/>
+            </Card>
+          </>
+
+        }
       </main>
+
+
     </div>
   )
 }
