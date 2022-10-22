@@ -10,10 +10,12 @@
     "@emotion/styled": "^11.10.4",
     "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.10.9",
+    "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.10.10",
     "jotai": "^1.8.6",
     "mysql2": "^2.3.3",
     "next": "latest",
+    "openai": "^3.0.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "sql-formatter": "^11.0.2"
