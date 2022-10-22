@@ -1,13 +1,6 @@
 import {ConnectionOptions, createConnection} from 'mysql2';
+import { get_value_from_env } from './env'; 
 
-
-const get_value_from_env = (name: string): string => {
-  const value = process.env[name];
-  if (value === undefined) {
-    throw new Error(`Environment variable ${name} is not defined`);
-  }
-  return value;
-}
 
 const create_connect_config = (): ConnectionOptions => {
   return {
