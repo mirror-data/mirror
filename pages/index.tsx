@@ -44,7 +44,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {useState} from "react";
 import AnswerComponent from "../components/Answer";
 import DataTable from "../components/DataTable";
-import SqlSnippet from "../components/SqlSnippet";
+import SqlSnippet from "../components/SqlEditor";
 import {fetchChoices} from "../components/datasource";
 
 // NextJS
