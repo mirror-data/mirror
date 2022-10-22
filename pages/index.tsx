@@ -146,7 +146,7 @@ const Home: NextPage = () => {
                 })
             })
             const d = await res.json() as EditResponse
-            const modified = format(d.sql.startsWith("SELECT") ? d.sql : "SELECT\n" + d.sql)
+            const modified = format(d.sql)
 
             setResult(q => {
                 const history = q.history ?? []
@@ -226,8 +226,6 @@ const Home: NextPage = () => {
             </Paper>
             <div className="mt-3"/>
             <main className="flex w-full flex-1 flex-col  px-20">
-
-
                 {isLoading && <div className="flex justify-center"><CircularProgress/></div>}
 
 

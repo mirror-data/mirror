@@ -1,22 +1,23 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {getPrompt} from "../../utils/openai";
 import {getValueFromEnv} from "../../utils/env";
 
 let token = "tid=0;expired=0"
 
-export interface suggest {
+export interface choice {
     order: number
     text: string
 }
-export interface SuggestResponse {
-    suggestions?: suggest[]
-    time?: number
-    data?: unknown
-    error?: string
+export interface CopilotResponse {
+    choices: choice[]
+    time: number
+    data: unknown
+}
+export interface CopilotErrorResponse {
+    error: string
 }
 export default async function handler(
     req: NextApiRequest,
-    nextRes: NextApiResponse<SuggestResponse>
+    nextRes: NextApiResponse<CopilotResponse | CopilotErrorResponse>
 ) {
 
     const start = Date.now()
@@ -33,11 +34,6 @@ export default async function handler(
         token = res.token
     }
 
-
-    const question = req.body.question;
-    const SQL_TEMPLATE = getPrompt({question})
-
-
     const res = await fetch("https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions",
         {
             headers: {
@@ -48,14 +44,14 @@ export default async function handler(
             },
             method: "POST",
             body: JSON.stringify({
-                "prompt": SQL_TEMPLATE,
+                prompt: req.body.prompt,
                 "stream": true,
                 "stop": [
                     "#",
                     "---",
                 ],
                 "temperature": 0.3,
-                "max_tokens": 400,
+                "max_tokens": req.body.max ?? 400,
                 "top_p": 1,
                 "n": 1,
                 "logprobs": 2,
@@ -66,7 +62,6 @@ export default async function handler(
         })
 
     if (!res.startsWith("data: ")) {
-
         nextRes.status(401).json({error: res})
     }
 
@@ -77,17 +72,17 @@ export default async function handler(
         .map(value => JSON.parse(value))
 
 
-    const summary = new Map<number, string>();
+    const choices = new Map<number, string>();
     results.forEach(data => {
         const c = data.choices[0]
-        if (!summary.has(c.index)) {
-            summary.set(c.index, "SELECT")
+        if (!choices.has(c.index)) {
+            choices.set(c.index, "")
         }
-        summary.set(c.index, summary.get(c.index) + c.text)
+        choices.set(c.index, choices.get(c.index) + c.text)
     })
 
-    const suggestions = Array.from(summary.entries()).map(([order, text]) => ({order, text}))
-
-
-    nextRes.status(200).json({time: Date.now() - start, suggestions, data: results})
+    nextRes.status(200).json({
+        time: Date.now() - start,
+        choices: Array.from(choices.entries()).map(([order, text]) => ({order, text})),
+        data: results})
 }
