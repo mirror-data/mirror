@@ -11,10 +11,12 @@
     "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.10",
+    "jotai": "^1.8.6",
     "mysql2": "^2.3.3",
     "next": "latest",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "sql-formatter": "^11.0.2"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
