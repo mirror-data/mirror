@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.submit-instruction-button {
+    background-color: #1976d2;
+}

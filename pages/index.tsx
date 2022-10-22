@@ -1,3 +1,5 @@
+// **** BEGIN original prompt to generate UI skeleton ****
+
 // Search Page
 // use NextJS, MUI, Tailwind, React
 // grid:
@@ -36,110 +38,210 @@
 // component: AnswerComponent, DataTable, SqlSnippet
 // use MUI Card wrapper each component, with padding
 
+// **** END original prompt to generate UI skeleton ****
 
 import type {NextPage} from 'next'
 import Head from 'next/head'
-import {Card, Paper, TextField} from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import Result from "../components/Result";
 import {useState} from "react";
-import AnswerComponent from "../components/Answer";
-import DataTable from "../components/DataTable";
-import SqlSnippet from "../components/SqlEditor";
-import {fetchChoices} from "../components/datasource";
-
-// NextJS
-// Mui
-// Tailwind
-// React
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import {CircularProgress, TextField, Autocomplete} from "@mui/material";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import Paper from "@mui/material/Paper";
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import {useAtom} from "jotai";
+import {resultAtom, ResultStatus} from "../state/question";
+import {fetchAnswer, fetchData, fetchSuggestion} from "../utils/datasource";
+import {format} from 'sql-formatter';
+import {EditResponse} from "./api/edit";
 
 const Home: NextPage = () => {
+    const [input, setInput] = useState("")
+    const [searchSuggestions, setSearchSuggestions] = useState<string[]>([
+        "Which country or region contributes the most to programming languages?",
+        "How many tables are in the dataset?",
+        "How many events are in the dataset?",
+        "How many repositories are in the dataset?",
+        "How many event types are in the dataset?",
+        "What is the range of time for the data in the dataset?",
+    ])
+    const handleInputChange = (event: any, newValue: string) => {
+        setInput(newValue);
+    };
 
-  const [searchInputValue, setSearchInputValue] = useState("How to get the most popular movie in 2019?")
-  const [answer, setAnswer] = useState("")
-  const [data, setData] = useState("")
-  const [sql, setSql] = useState("")
-  const [error, setError] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
-  const onSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInputValue(event.target.value)
-  }
+    const [showImproveBar, setShowImproveBar] = useState(false)
 
-  const onSearch = () => {
-    // setAnswer("The most popular movie in 2019 is The Avengers.")
-    // setData("movie_name,release_year\n" +
-    //   "The Avengers,2019\n" +
-    //   "The Avengers: Age of Ultron,2015\n" +
-    //   "Avengers: Infinity War,2018\n" +
-    //   "Avengers: Endgame,2019\n" +
-    //   "Captain Marvel,2019\n")
-    // setSql("SELECT movie_name, release_year\n" +
-    //   "FROM movies\n" +
-    //   "WHERE release_year = 2019\n" +
-    //   "ORDER BY popularity DESC\n" +
-    //   "LIMIT 1")
-    const fn = async () => {
-      const res = await fetchChoices(searchInputValue)
-      if (res.error) {
-        setError(res.error)
-        return
-      }
+    const [result, setResult] = useAtom(resultAtom)
 
-      setSql(res?.choices?.[0]?.text || "")
-    }
+    // todo, use ResultStatus.LOADING_EDIT instead of editLoading
+    const [editLoading, setEditLoading] = useState(false)
 
-    fn()
-  }
+    const onSearch = () => {
+        setIsLoading(true)
 
-  return (
-    <div className="flex flex-col h-screen">
-      <Head>
-        <title>Search Page</title>
-        <meta name="description" content="Search Page"/>
-        <link rel="icon" href="/favicon.svg"/>
-      </Head>
+        const fn = async () => {
+            setIsLoading(false)
+            setResult(q => ({
+                ...q,
+                question: input,
+                status: ResultStatus.LOADING_SUGGESTIONS,
+                history: []
+            }))
 
-      <header className="flex flex-row">
-        <Paper
-          component="form"
-          className="flex flex-row items-center w-full p-2 px-4 m-2 space-x-4 bg-white rounded-full shadow-xl"
-        >
-          <TextField
-            id="searchInput"
-            label="🪞mirror, mirror on the wall"
-            variant="standard"
-            value={searchInputValue}
-            onChange={onSearchInputChange}
-            className="mx-2"
-            fullWidth
-          />
-          <SearchIcon
-            className="cursor-pointer"
-            onClick={onSearch}
-          />
-        </Paper>
-      </header>
+            const fetchResult = await fetchSuggestion(input)
+            setResult(old => ({
+                ...old,
+                ...fetchResult
+            }))
+            if (result.error){
+                return
+            }
 
-      <main className="flex flex-col flex-1 p-2 m-2 space-y-2 overflow-auto bg-gray-100">
-        {
-          sql &&
-          <>
-            <div className="flex">
-              <div className="flex-1"><AnswerComponent answer={answer}/></div>
-              <div className="flex-1"><DataTable data={data}/></div>
-            </div>
 
-            <Card className="p-2">
-              <SqlSnippet sql={sql}/>
-            </Card>
-          </>
+
+
+            const dataResult = await fetchData(fetchResult?.suggestion?.sql ?? "")
+            setResult(old => ({
+                ...old,
+                ...dataResult
+            }))
+
+
+            const answerResult = await fetchAnswer(dataResult, input)
+            setResult(old => ({
+                ...old,
+                ...answerResult
+            }))
+
+
+
 
         }
-      </main>
+        fn()
+    }
 
 
-    </div>
-  )
+    const onEdit = (instruction: string) => {
+        setEditLoading(true)
+        const fn = async () => {
+            setResult(q => ({
+                ...q,
+                status: ResultStatus.LOADING_EDIT
+            }))
+
+            const res = await fetch(`/api/edit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: result.question,
+                    sql: result.suggestion?.sql,
+                    instruction: instruction
+                })
+            })
+            const d = await res.json() as EditResponse
+            const modified = format(d.sql.startsWith("SELECT") ? d.sql : "SELECT\n" + d.sql)
+
+            setResult(q => {
+                const history = q.history ?? []
+                history.push({
+                    original: q.suggestion?.sql ?? "",
+                    modified: modified,
+                    instruction: instruction
+                })
+
+                const suggestion = q.suggestion ?? {sql: "", order: 0}
+                suggestion.sql = modified
+
+                return {
+                    ...q,
+                    suggestion,
+                    history
+                }
+            })
+            setEditLoading(false)
+
+
+            const dataResult = await fetchData(modified)
+            setResult(old => ({
+                ...old,
+                ...dataResult
+            }))
+
+
+            const answerResult = await fetchAnswer(dataResult, input)
+            setResult(old => ({
+                ...old,
+                ...answerResult
+            }))
+        }
+        fn()
+    }
+
+
+    return (
+        <div className="flex min-h-screen flex-col items-center justify-center"
+             style={{backgroundColor: "#f5f5f5"}}>
+            <Head>
+                <title>Mirror</title>
+                <link rel="icon"
+                      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪞</text></svg>"/>
+            </Head>
+
+
+            <Paper className={"w-full p-4"}>
+
+                <div className="pt-2 relative mx-auto text-gray-600 w-full flex items-end	">
+                    <Autocomplete
+                        freeSolo
+                        fullWidth
+                        value={input}
+                        onInputChange={handleInputChange}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                variant="standard"
+                                className="flex flex-grow"
+                                label={"🪞Mirror, Mirror on the Wall"}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    type: 'search',
+                                    endAdornment: <IconButton type="button" sx={{p: '10px'}} aria-label="search"
+                                                            onClick={onSearch}>
+                                        <SearchIcon/>
+                                    </IconButton>
+                                }}
+                            />
+                        )}
+                        options={searchSuggestions}
+                    />
+                </div>
+
+            </Paper>
+            <div className="mt-3"/>
+            <main className="flex w-full flex-1 flex-col  px-20">
+
+
+                {isLoading && <div className="flex justify-center"><CircularProgress/></div>}
+
+
+                <Result onEdit={onEdit} editLoading={editLoading}/>
+
+
+            </main>
+
+
+        </div>
+    )
 }
+
+
 export default Home
 
 
