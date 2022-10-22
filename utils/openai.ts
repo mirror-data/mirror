@@ -1,5 +1,5 @@
 
-export const getPrompt = ({question, describe}:{question: string, describe?: string}) => {
+export const getPrompt = ({question}:{question: string}) => {
     return `# MySQL SQL 
 # Table github_events, columns = [id, type, created_at, repo_id, repo_name, actor_id, actor_login, actor_location, language, additions, deletions, action, number, commit_id, comment_id, org_login, org_id, state, closed_at, comments, pr_merged_at, pr_merged, pr_changed_files, pr_review_comments, pr_or_issue_id, event_day, event_month, author_association, event_year, push_size, push_distinct_size]
 # Table programming_language_repos, columns = [id, name]
@@ -9,7 +9,6 @@ export const getPrompt = ({question, describe}:{question: string, describe?: str
 # Describe [contribute] distinct users
 # Describe [contribute] github_events.type = [IssuesEvent, PullRequestEvent, PullRequestReviewCommentEvent, CommitCommentEvent, PullRequestReviewEvent]
 # Describe [country or region] country_code
-${describe}
 # Question:
 # ${question}?
 ---
