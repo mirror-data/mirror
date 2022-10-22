@@ -27,14 +27,13 @@ export const fetchSuggestion = async (question: string): Promise<Partial<IResult
         }
     }
 
-    console.log("?", data)
-    const {text: sql, order} = data.suggestions[0]
+    const suggestion = data.suggestions?.[0] ?? {order: -1, text: "UNKNOWN"}
 
     return {
         status: ResultStatus.LOADING_DATA,
         suggestion: {
-            order,
-            sql: format(sql),
+            order: suggestion.order,
+            sql: format(suggestion.text),
         }
     }
 }

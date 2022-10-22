@@ -2,16 +2,17 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {getPrompt} from "../../utils/openai";
 import {getValueFromEnv} from "../../utils/env";
 
-let token = getValueFromEnv('COPILOT_INIT_TOKEN');
+let token = "tid=0;expired=0"
 
 export interface suggest {
     order: number
     text: string
 }
 export interface SuggestResponse {
-    suggestions: suggest[]
-    time: number
-    data: unknown
+    suggestions?: suggest[]
+    time?: number
+    data?: unknown
+    error?: string
 }
 export default async function handler(
     req: NextApiRequest,
