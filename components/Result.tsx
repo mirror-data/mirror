@@ -113,7 +113,7 @@ export default ({onEdit, editLoading}: Props) => {
 
                 </Paper>
 
-                <Paper className={`${question.status <= ResultStatus.LOADING_DATA && "flex justify-center p-4"} mt-4`}>
+                <Paper className={"flex justify-center p-4 mt-4"}>
                     {question.status <= ResultStatus.LOADING_DATA
                       ? <CircularProgress/>
                       : <Chart data={{
