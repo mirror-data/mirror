@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {getPrompt} from "../../utils/openai";
+import {getSQLEditorPrompt} from "../../utils/prompt";
 import {getValueFromEnv} from "../../utils/env";
 
 const {Configuration, OpenAIApi} = require("openai");
@@ -22,12 +22,16 @@ export default async function handler(
 
     const response = await openai.createEdit({
         model: "code-davinci-edit-001",
-        input: getPrompt({question: req.body.question}) + req.body.sql,
+        input: getSQLEditorPrompt({
+            question: req.body.question,
+            sql: req.body.sql,
+            histories: req.body.histories,
+        }),
         instruction: req.body.instruction,
     });
 
 
-    const sql = response.data?.choices?.[0]?.text.split("---\nSELECT")[1];
+    const sql = response.data?.choices?.[0]?.text.split("---SQL---")[1];
 
     res.status(200).json({sql, data: response.data})
 }

@@ -11,10 +11,8 @@
 
 
 import * as React from 'react';
-import {useEffect} from 'react';
 import Paper from '@mui/material/Paper';
 import {
-    Button,
     CircularProgress,
     Grid,
     Table,
@@ -23,13 +21,13 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField
 } from "@mui/material";
 import {resultAtom, ResultStatus} from "../state/question";
 import {useAtom} from 'jotai'
 import SqlEditor from "./SqlEditor";
-import {LoadingButton} from "@mui/lab";
 import {DiffModal} from "./DiffModal";
+import Instruction from "./Instruction";
+import Chart from "./Chart";
 
 interface Props {
     editLoading: boolean
@@ -38,15 +36,9 @@ interface Props {
 
 export default ({onEdit, editLoading}: Props) => {
     const [question, setQuestion] = useAtom(resultAtom)
-    const [instruction, setInstruction] = React.useState<string>("")
 
 
-    useEffect(() => {
-        if (!editLoading) {
-            setInstruction("")
-        }
 
-    }, [editLoading])
     if (question.status == ResultStatus.INITIAL) {
         return <></>
     }
@@ -83,24 +75,10 @@ export default ({onEdit, editLoading}: Props) => {
                     />)
                 }
                 {
-                    question.status > ResultStatus.LOADING_SUGGESTIONS && <div className={"flex"}>
-                        <TextField
-                            className={"flex-grow"}
-                            label="Add more instructions"
-                            variant="standard"
-                            value={instruction}
-                            disabled={editLoading}
-                            onChange={e => setInstruction(e.target.value)}
-                            fullWidth
-                        />
-                        {
-                            editLoading
-                                ? <LoadingButton size="small" variant="outlined" loading/>
-                                :
-                                <Button className="submit-instruction-button" size="small" variant="contained" onClick={e => onEdit(instruction)}>Submit</Button>
-
-                        }
-                    </div>
+                    question.status > ResultStatus.LOADING_SUGGESTIONS && <Instruction
+                        editLoading={editLoading}
+                        onEdit={onEdit}
+                    />
                 }
 
             </Grid>
@@ -131,6 +109,18 @@ export default ({onEdit, editLoading}: Props) => {
                         </TableContainer>
                     }
 
+
+
+                </Paper>
+
+                <Paper className={`${question.status <= ResultStatus.LOADING_DATA && "flex justify-center p-4"} mt-4`}>
+                    {question.status <= ResultStatus.LOADING_DATA
+                      ? <CircularProgress/>
+                      : <Chart data={{
+                          columns: question.data?.columns ?? [],
+                          rows: question.data?.rows || []
+                      }}/>
+                    }
 
                 </Paper>
 
