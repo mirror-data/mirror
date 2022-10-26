@@ -14,12 +14,12 @@
     "@mui/material": "^5.10.10",
     "@vercel/analytics": "^0.1.1",
     "jotai": "^1.8.6",
-    "mysql2": "^2.3.3",
     "next": "latest",
     "openai": "^3.0.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-vega": "^7.6.0",
+    "serverless-mysql": "^1.5.4",
     "sql-formatter": "^11.0.2",
     "vega": "^5.22.1",
     "vega-lite": "^5.6.0"

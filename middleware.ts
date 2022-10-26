@@ -4,13 +4,13 @@ export const config = {
   matcher: ['/', '/index'],
 }
 
-const user = process.env["AUTH_USER"]
-const password = process.env["AUTH_PASSWORD"]
+const AUTH_USER = process.env["AUTH_USER"]
+const AUTH_PASSWORD = process.env["AUTH_PASSWORD"]
 
 export function middleware(req: NextRequest) {
   const basicAuth = req.headers.get('authorization')
   const url = req.nextUrl
-  if (!user) {
+  if (!AUTH_USER) {
     return NextResponse.next()
   }
 
@@ -18,11 +18,12 @@ export function middleware(req: NextRequest) {
     const authValue = basicAuth.split(' ')[1]
     const [user, pwd] = atob(authValue).split(':')
 
-    if (user === user && pwd === password) {
+    if (user === AUTH_USER && pwd === AUTH_PASSWORD) {
       return NextResponse.next()
     }
   }
   url.pathname = '/api/auth'
 
+  console.log("url", url, "redirec")
   return NextResponse.rewrite(url)
 }
