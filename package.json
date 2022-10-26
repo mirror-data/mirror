@@ -12,6 +12,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/lab": "^5.0.0-alpha.102",
     "@mui/material": "^5.10.10",
+    "@vercel/analytics": "^0.1.1",
     "jotai": "^1.8.6",
     "mysql2": "^2.3.3",
     "next": "latest",
