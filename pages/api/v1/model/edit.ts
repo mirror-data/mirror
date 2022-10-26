@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {getSQLEditorPrompt} from "../../utils/prompt";
-import {getValueFromEnv} from "../../utils/env";
+import { getValueFromEnv } from "@/utils/env";
+import {getSQLEditorPrompt} from "@/utils/prompt";
 
 const {Configuration, OpenAIApi} = require("openai");
 

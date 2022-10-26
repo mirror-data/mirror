@@ -12,4 +12,3 @@ const createConnectConfig = (): ConnectionOptions => {
   }
 }
 export const connection = createConnection(createConnectConfig());
-console.log('Connected to database', createConnectConfig());
