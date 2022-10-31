@@ -6,8 +6,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.4",
+    "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.4",
+    "@mantine/core": "^5.6.3",
+    "@mantine/hooks": "^5.6.3",
+    "@mantine/modals": "^5.6.3",
+    "@mantine/nprogress": "^5.6.3",
+    "@mantine/prism": "^5.6.3",
     "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.10.9",
     "@mui/lab": "^5.0.0-alpha.102",

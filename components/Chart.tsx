@@ -2,13 +2,19 @@ import {Vega} from "react-vega";
 import {Handler} from 'vega-tooltip';
 import dynamic from "next/dynamic";
 import React from "react";
+import {useResizeObserver} from "@mantine/hooks";
 
 interface ChartProps {
   config: any
 }
 
 const Chart: React.FC<ChartProps> = ({config}) => {
-  return <Vega spec={config} tooltip={new Handler().call}/>
+
+  return <div ><Vega spec={{
+    ...config,
+    width: 500
+  }} tooltip={new Handler().call}/>
+  </div>
 }
 const NoSSR = dynamic(() => Promise.resolve(Chart), {
   ssr: false

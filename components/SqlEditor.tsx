@@ -1,39 +1,16 @@
-// **** BEGIN original prompt to generate UI skeleton ****
-
-// use NextJS, MUI, Tailwind, React
-
-// SqlSnippet
-// input: text with sql code
-// show sql code with pre, with mono font, with background color #f6f8fa
-
-// **** END original prompt to generate UI skeleton ****
-
-import Editor, {OnMount, useMonaco} from "@monaco-editor/react";
-import * as React from "react";
-import {useEffect, useRef} from "react";
+import {MonacoWrap} from "./monacoWrap"
+import {Button} from "@mantine/core";
 
 export default ({code}: { code: string }) => {
-    const editorRef = useRef<any>(null);
 
-    const handleEditorDidMount: OnMount = (editor, monaco)=>{
+  return <div className="relative h-full">
+    <MonacoWrap code={code}/>
+    {/*<div className="absolute left-0 bottom-1 flex gap-2">*/}
+    {/*  <Button variant="outline" size="xs">Run</Button>*/}
+    {/*  <Button variant="outline" size="xs">Edit</Button>*/}
 
-        editorRef.current = {
-            editor,
-            monaco,
-        }
-    }
+    {/*</div>*/}
 
-    return <Editor
-        height="300px"
-        options={{
-            readOnly: true,
-            domReadOnly: true,
-            minimap: {
-                enabled: false
-            }
-        }}
-        onMount={handleEditorDidMount}
-        defaultLanguage="sql"
-        value={code}
-    />
+  </div>
+
 }

@@ -27,7 +27,13 @@ export default async function handler(
 ) {
 
   let results = await mysql.query(req.body.sql)
+  if (!results || results.length === 0) {
+    return res.status(200).json({error: "No results"})
+  }
   const columns = Object.keys(results[0]) || []
+  if (columns.length === 0) {
+    return res.status(200).json({error: "No results"})
+  }
   const rows = results.map((row: any) => columns.map((column: any) => row[column]))
 
   res.status(200).json({

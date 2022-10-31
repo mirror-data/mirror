@@ -17,6 +17,7 @@ import Instruction from "./Instruction";
 import Chart from "./Chart";
 import {useCallback, useEffect} from "react";
 import {fetchData, fetchEdit, fetchSQL, fetchSummary, fetchVega} from "@/utils/apis";
+import {SqlData} from "@/components/SqlData";
 
 interface Props {
   question: string
@@ -35,6 +36,7 @@ export default ({question}: Props) => {
 
   const [sqlData, setSqlData] = React.useState<SQLData>()
   const [sqlDataLoading, setSqlDataLoading] = React.useState(false)
+  const [sqlDataError, setSqlDataError] = React.useState<string>()
 
   const [chartConfig, setChartConfig] = React.useState<any>()
   const [chartConfigLoading, setChartConfigLoading] = React.useState(false)
@@ -61,6 +63,7 @@ export default ({question}: Props) => {
       setSqlDataLoading(true)
       fetchData(sql).then((res) => {
         if ("error" in res) {
+          setSqlDataError(res.error)
           console.error(res.error)
           return
         }
@@ -155,30 +158,7 @@ export default ({question}: Props) => {
     </Grid>
     <Grid item xs={4}>
       <Paper className={`${sqlDataLoading && "flex justify-center p-4"}`}>
-        {sqlDataLoading
-          ? <CircularProgress/>
-          : <TableContainer component={Paper} sx={{maxHeight: 400}}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  {sqlData?.columns?.map((v, i) => <TableCell key={i}>{v}</TableCell>)}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sqlData?.rows?.map((row, index) => (
-                  <TableRow
-                    key={`row-${index}`}
-                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                  >
-                    {row.map((v, index) => <TableCell component="th" scope="row" key={`cell-${index}`}>
-                      {v || "NULL"}
-                    </TableCell>)}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        }
+        <SqlData data={sqlData} error={sqlDataError}  isLoading={sqlDataLoading}/>
 
 
       </Paper>
