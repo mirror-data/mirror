@@ -3,7 +3,6 @@ import {useState} from "react";
 import SqlEditor from "@/components/SqlEditor";
 import * as React from "react";
 import DataTable from "@/components/DataTable";
-import Chart from "@/components/Chart";
 import {Card} from "@/components/v2/Card";
 import {useAtom} from "jotai";
 import {
