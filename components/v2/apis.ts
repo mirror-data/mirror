@@ -88,8 +88,9 @@ export const fetchData = async (sql: string): Promise<DataState> => {
   let {error, data} = await verify<SQLResponse>(res)
   if (error || !data) {
     return {
+      columns: [], rows: [],
       ...isDone,
-      error,
+      error
     }
   }
 
