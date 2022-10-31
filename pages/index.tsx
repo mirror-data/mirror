@@ -1,4 +1,4 @@
-import {Autocomplete, Input, Button, Paper, Space, TextInput, Modal} from "@mantine/core";
+import {Autocomplete, Text, Button, Modal} from "@mantine/core";
 import {useState} from "react";
 import SqlEditor from "@/components/SqlEditor";
 import * as React from "react";
@@ -6,7 +6,7 @@ import DataTable from "@/components/DataTable";
 import {Card} from "@/components/v2/Card";
 import {useAtom} from "jotai";
 import {
-  dataStatusAtom,
+  dataStatusAtom, INIT_SQL,
   INITIAL_DATA_STATUS,
   INITIAL_SUMMARY_STATUS,
   loadData,
@@ -55,6 +55,24 @@ export default () => {
   }
 
 
+  const codeChange = (sql: string) => {
+    setSummary(INITIAL_SUMMARY_STATUS)
+    setData(INITIAL_DATA_STATUS)
+
+    setSqlStatus({
+      ...INIT_SQL,
+      initialized: true,
+      sql,
+    })
+
+    const fn = async () => {
+      const dataStatus = await loadData(sql, setData)
+      loadSummary(question, dataStatus.columns, dataStatus.rows, setSummary)
+    }
+    fn()
+
+  }
+
   return <div style={{
     backgroundColor: "rgb(237 242 255 / 40%)",
     backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%23E7F5FF'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E\")",
@@ -70,7 +88,7 @@ export default () => {
         onClose={() => setChooseRepoModal(false)}
         title="Introduce yourself!"
       >
-        <ChooseRepo setRepo={(id, name)=>setRepo({id, name})} onClose={()=>setChooseRepoModal(false)}/>
+        <ChooseRepo setRepo={(id, name) => setRepo({id, name})} onClose={() => setChooseRepoModal(false)}/>
       </Modal>
       <div className="flex gap-2 flex-grow ">
         <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
@@ -78,7 +96,7 @@ export default () => {
         </Button>
 
         <Autocomplete
-          filter={()=>true}
+          filter={() => true}
           className="flex-grow"
           label="Your Question"
           value={question} onChange={(v) => setQuestion(v)}
@@ -98,14 +116,23 @@ export default () => {
       </Button>
     </div>
 
+    <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading} className="item-center bg-white p-2 my-4 w-auto">
+      <Text  align="center"
+            variant="gradient"
+            gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+            size="xl"
+            weight={700}>
+        The following content was automatically collected and created by AI. No presets.
+      </Text>
+    </Card>
 
-    <Space h="xl"/>
     <div className="flex flex-col gap-6 grow">
 
 
       <div className="grow flex gap-6 ">
         <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading}>
           <SqlEditor
+            onChange={(v) => codeChange(v)}
             code={sqlStatus.sql ?? ""}
           />
         </Card>

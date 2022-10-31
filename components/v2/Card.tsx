@@ -5,11 +5,12 @@ interface CardProps {
   isLoaded?: boolean
   error?: string
   initialized?: boolean
+  className?: string
   children?: React.ReactNode
 }
 
-export const Card: React.FC<CardProps> = ({initialized, isLoaded, error, children}) => {
-  const PaperProps = {shadow: "xs", p: "md"}
+export const Card: React.FC<CardProps> = ({className, initialized, isLoaded, error, children}) => {
+  const PaperProps = {shadow: "xs", p: "md", className}
   if (!initialized) {
     return null
   }

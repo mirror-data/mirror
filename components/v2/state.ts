@@ -1,4 +1,4 @@
-import {atom, SetStateAction} from "jotai";
+import {atom} from "jotai";
 import {fetchData, fetchSummary} from "@/components/v2/apis";
 
 const INITIAL_STATE = {
@@ -12,7 +12,7 @@ interface State {
 }
 
 export interface SqlState extends State {
-  sql?: string;
+  sql: string;
 }
 
 export const setLoading = <T extends State>(state: T): T => {
@@ -23,7 +23,11 @@ export const setLoading = <T extends State>(state: T): T => {
   };
 }
 
-export const sqlStatusAtom = atom<SqlState | Promise<SqlState>>({initialized: false, loading: false, error: ""})
+export const INIT_SQL = {
+  ...INITIAL_STATE,
+  sql: "",
+}
+export const sqlStatusAtom = atom<SqlState>(INIT_SQL)
 
 
 // DATA
