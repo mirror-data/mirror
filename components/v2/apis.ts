@@ -55,6 +55,7 @@ export const fetchSQL = async (question: string): Promise<SqlState> => {
   let {error, data} = await verify<CopilotResponse>(res)
   if (error || !data) {
     return {
+      sql: "",
       ...isDone,
       error
     }
