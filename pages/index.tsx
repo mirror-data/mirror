@@ -1,4 +1,4 @@
-import {Autocomplete, Input, Button, Paper, Space, TextInput} from "@mantine/core";
+import {Autocomplete, Input, Button, Paper, Space, TextInput, Modal} from "@mantine/core";
 import {useState} from "react";
 import SqlEditor from "@/components/SqlEditor";
 import * as React from "react";
@@ -17,16 +17,17 @@ import {
 } from "@/components/v2/state";
 import {fetchSQL} from "@/components/v2/apis";
 import Head from "next/head";
+import ChooseRepo from "@/components/v2/ChooseRepo";
 
 interface Repo {
-  value: string
+  name: string
   id: string
 }
 
 export default () => {
   const [repo, setRepo] = useState<Repo>({
-    value: "PingCAP/TiDB",
-    id: "1"
+    name: "PingCAP/TiDB",
+    id: "41986369"
   })
 
   const [question, setQuestion] = useState<string>("Who created the first pull request of this repo?")
@@ -34,6 +35,7 @@ export default () => {
   const [data, setData] = useAtom(dataStatusAtom)
   const [summary, setSummary] = useAtom(summaryStatusAtom)
 
+  const [chooseRepoModal, setChooseRepoModal] = useState<boolean>(false)
 
   const onSearch = () => {
     setSummary(INITIAL_SUMMARY_STATUS)
@@ -42,7 +44,7 @@ export default () => {
 
     setSqlStatus(setLoading(sqlStatus))
     const fn = async () => {
-      const res = await fetchSQL(`repo_id equal 41986369,${question}`)
+      const res = await fetchSQL(`repo_id equal ${repo.id},${question}`)
       setSqlStatus(res)
       if (!res.error && res.sql) {
         const dataStatus = await loadData(res.sql, setData)
@@ -63,15 +65,17 @@ export default () => {
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪞</text></svg>"/>
     </Head>
     <div className="flex gap-2 p-4 bg-white pb-6 rounded-lg justify-between items-center">
+      <Modal
+        opened={chooseRepoModal}
+        onClose={() => setChooseRepoModal(false)}
+        title="Introduce yourself!"
+      >
+        <ChooseRepo setRepo={(id, name)=>setRepo({id, name})} onClose={()=>setChooseRepoModal(false)}/>
+      </Modal>
       <div className="flex gap-2 flex-grow ">
-        <Autocomplete
-          disabled
-          label="Your repo"
-          value={repo?.value}
-          onChange={(value: string) => setRepo({value, id: "1"})}
-          placeholder="Pick one"
-          data={['React', 'Angular', 'Svelte', 'Vue']}
-        />
+        <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
+          {repo.name}
+        </Button>
 
         <Autocomplete
           filter={()=>true}
