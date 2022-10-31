@@ -16,7 +16,7 @@ export default ({setRepo, onClose}: {setRepo: (id:string, name: string)=>void, o
   useEffect(() => {
     setIsLoading(true)
     const v = (debounced && debounced.length > 0) ? debounced : "recommend-repo-list-1-keyword"
-    fetch(`https://api.ossinsight.io/gh/repos/search?keyword=${v}`)
+    fetch(`/api/v1/repo?keyword=${v}`)
       .then(res => res.json())
       .then(res => {
         setIsLoading(false)
