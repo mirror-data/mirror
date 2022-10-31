@@ -3,5 +3,16 @@
 @tailwind utilities;
 
 .submit-instruction-button {
-    background-color: #1976d2;
+  background-color: #1976d2;
+}
+
+.gradient-text {
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    rgb(76, 110, 245) 0%,
+    rgb(64, 192, 87) 100%
+  );
 }

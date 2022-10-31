@@ -1,5 +1,5 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
+import * as React from 'react'
+import Paper from '@mui/material/Paper'
 import {
   CircularProgress,
   Grid,
@@ -9,14 +9,20 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@mui/material";
-import { SQLData} from "@/state/question";
-import SqlEditor from "./SqlEditor";
-import {DiffModal} from "./DiffModal";
-import Instruction from "./Instruction";
-import Chart from "./Chart";
-import {useCallback, useEffect} from "react";
-import {fetchData, fetchEdit, fetchSQL, fetchSummary, fetchVega} from "@/utils/apis";
+} from '@mui/material'
+import { SQLData } from '@/state/question'
+import SqlEditor from './SqlEditor'
+import { DiffModal } from './DiffModal'
+import Instruction from './Instruction'
+import Chart from './Chart'
+import { useCallback, useEffect, useRef } from 'react'
+import {
+  fetchData,
+  fetchEdit,
+  fetchSQL,
+  fetchSummary,
+  fetchVega,
+} from '@/utils/apis'
 
 interface Props {
   question: string
@@ -28,9 +34,8 @@ interface editHistory {
   modified: string
 }
 
-export default ({question}: Props) => {
-
-  const [sql, setSql] = React.useState<string>("")
+export default ({ question }: Props) => {
+  const [sql, setSql] = React.useState<string>('')
   const [sqlLoading, setSqlLoading] = React.useState(false)
 
   const [sqlData, setSqlData] = React.useState<SQLData>()
@@ -43,24 +48,33 @@ export default ({question}: Props) => {
   const [history, setHistory] = React.useState<editHistory[]>([])
 
   const [summaryLoading, setSummaryLoading] = React.useState(false)
-  const [summary, setSummary] = React.useState<string>("")
+  const [summary, setSummary] = React.useState<string>('')
+
+  const resultRef = useRef(null)
 
   useEffect(() => {
     if (question) {
       setSqlLoading(true)
-      fetchSQL(question).then(({sql}) => {
+      fetchSQL(question).then(({ sql }) => {
         setSql(sql)
         setSqlLoading(false)
       })
-    }
 
+      window.scrollTo({
+        top:
+          resultRef?.current?.getBoundingClientRect().top +
+          window.pageYOffset -
+          20,
+        behavior: 'smooth',
+      })
+    }
   }, [question])
 
   useEffect(() => {
     if (sql) {
       setSqlDataLoading(true)
       fetchData(sql).then((res) => {
-        if ("error" in res) {
+        if ('error' in res) {
           console.error(res.error)
           return
         }
@@ -68,9 +82,7 @@ export default ({question}: Props) => {
         setSqlDataLoading(false)
       })
     }
-
   }, [sql])
-
 
   useEffect(() => {
     if (sqlData && sqlData.rows && sqlData.rows.length > 0) {
@@ -78,7 +90,7 @@ export default ({question}: Props) => {
       setSummaryLoading(true)
 
       fetchVega(sqlData).then((res) => {
-        if ("error" in res) {
+        if ('error' in res) {
           console.error(res.error)
           return
         }
@@ -87,7 +99,7 @@ export default ({question}: Props) => {
       })
 
       fetchSummary(question, sqlData).then((res) => {
-        if ("error" in res) {
+        if ('error' in res) {
           console.error(res.error)
           return
         }
@@ -97,102 +109,120 @@ export default ({question}: Props) => {
     }
   }, [sqlData])
 
-
-  const onEdit = useCallback((instruction: string) => {
-
-    setEditLoading(true)
-    fetchEdit(sql, question, instruction).then((res) => {
-      if ("error" in res) {
-        console.error(res.error)
-        return
-      }
-      setHistory([...history, {instruction, original: sql, modified: res.sql}])
-      setSql(res.sql)
-      setEditLoading(false)
-    })
-  }, [sql, question])
+  const onEdit = useCallback(
+    (instruction: string) => {
+      setEditLoading(true)
+      fetchEdit(sql, question, instruction).then((res) => {
+        if ('error' in res) {
+          console.error(res.error)
+          return
+        }
+        setHistory([
+          ...history,
+          { instruction, original: sql, modified: res.sql },
+        ])
+        setSql(res.sql)
+        setEditLoading(false)
+      })
+    },
+    [sql, question]
+  )
 
   if (!question) {
     return null
   }
-  return <Grid container spacing={2} className={"pt-8"}>
-    <Grid item xs={8}>
-      <Paper className="p-4">
-          <h1 className={`text-l flex ${summaryLoading && "justify-center"}`}>
-              {summaryLoading
-                  ? <CircularProgress/>
-                  : <>{summary}</>}
+
+  return (
+    <Grid ref={resultRef} container spacing={2}>
+      <Grid item xs={6}>
+        <Paper className="p-4 bg-stone-900 border-2 border-stone-600">
+          <h1
+            className={`text-l text-white flex ${
+              summaryLoading && 'justify-center'
+            }`}
+          >
+            {summaryLoading ? <CircularProgress /> : <>{summary}</>}
           </h1>
-      </Paper>
-      <Paper className="mt-4">
-        <div className={`${sqlLoading && "flex justify-center p-4"}`}>
-          {
-            sqlLoading
-              ? <CircularProgress/>
-              : <SqlEditor
-                code={sql}
+        </Paper>
+        <Paper className="mt-4 bg-stone-900 border-2 border-stone-600">
+          <div className={`${sqlLoading && 'flex justify-center p-4'}`}>
+            {sqlLoading ? <CircularProgress /> : <SqlEditor code={sql} />}
+          </div>
+        </Paper>
+        <div className="flex pt-4 gap-4">
+          {!sqlLoading &&
+            history.map((h, i) => (
+              <DiffModal
+                index={i}
+                instruction={h.instruction}
+                modified={h.modified}
+                original={h.original}
               />
-          }
+            ))}
         </div>
-
-
-      </Paper>
-      {
-        !sqlLoading && history.map((h, i) => <DiffModal
-          index={i}
-          instruction={h.instruction}
-          modified={h.modified}
-          original={h.original}
-        />)
-      }
-      {
-        !sqlLoading && <Instruction
-          editLoading={editLoading}
-          onEdit={onEdit}
-        />
-      }
-
-    </Grid>
-    <Grid item xs={4}>
-      <Paper className={`${sqlDataLoading && "flex justify-center p-4"}`}>
-        {sqlDataLoading
-          ? <CircularProgress/>
-          : <TableContainer component={Paper} sx={{maxHeight: 400}}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  {sqlData?.columns?.map((v, i) => <TableCell key={i}>{v}</TableCell>)}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sqlData?.rows?.map((row, index) => (
-                  <TableRow
-                    key={`row-${index}`}
-                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                  >
-                    {row.map((v, index) => <TableCell component="th" scope="row" key={`cell-${index}`}>
-                      {v || "NULL"}
-                    </TableCell>)}
+        {!sqlLoading && (
+          <Instruction editLoading={editLoading} onEdit={onEdit} />
+        )}
+      </Grid>
+      <Grid item xs={6}>
+        <Paper className={`${sqlDataLoading && 'flex justify-center p-4'}`}>
+          {sqlDataLoading ? (
+            <CircularProgress />
+          ) : (
+            <TableContainer
+              className="bg-stone-900 border-2 border-stone-600"
+              component={Paper}
+              sx={{ maxHeight: 400 }}
+            >
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {sqlData?.columns?.map((v, i) => (
+                      <TableCell
+                        className="bg-stone-900 border-b-2 border-stone-600 text-white"
+                        key={i}
+                      >
+                        {v}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        }
+                </TableHead>
+                <TableBody>
+                  {sqlData?.rows?.map((row, index) => (
+                    <TableRow
+                      key={`row-${index}`}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      {row.map((v, index) => (
+                        <TableCell
+                          className="text-white"
+                          component="th"
+                          scope="row"
+                          key={`cell-${index}`}
+                        >
+                          {v || 'NULL'}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Paper>
 
-
-      </Paper>
-
-      <Paper className={"flex justify-center p-4 mt-4"}>
-        {chartConfigLoading
-          ? <CircularProgress/>
-          : <Chart config={chartConfig}/>
-        }
-
-      </Paper>
-
+        <Paper
+          className={
+            'flex justify-center p-4 mt-4 bg-stone-900 border-2 border-stone-600'
+          }
+        >
+          {chartConfigLoading ? (
+            <CircularProgress />
+          ) : (
+            <Chart config={chartConfig} />
+          )}
+        </Paper>
+      </Grid>
     </Grid>
-
-
-  </Grid>
+  )
 }

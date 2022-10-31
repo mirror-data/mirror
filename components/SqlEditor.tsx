@@ -8,32 +8,34 @@
 
 // **** END original prompt to generate UI skeleton ****
 
-import Editor, {OnMount, useMonaco} from "@monaco-editor/react";
-import * as React from "react";
-import {useEffect, useRef} from "react";
+import Editor, { OnMount } from '@monaco-editor/react'
+import * as React from 'react'
+import { useRef } from 'react'
 
-export default ({code}: { code: string }) => {
-    const editorRef = useRef<any>(null);
+export default ({ code }: { code: string }) => {
+  const editorRef = useRef<any>(null)
 
-    const handleEditorDidMount: OnMount = (editor, monaco)=>{
-
-        editorRef.current = {
-            editor,
-            monaco,
-        }
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    editorRef.current = {
+      editor,
+      monaco,
     }
+  }
 
-    return <Editor
-        height="300px"
-        options={{
-            readOnly: true,
-            domReadOnly: true,
-            minimap: {
-                enabled: false
-            }
-        }}
-        onMount={handleEditorDidMount}
-        defaultLanguage="sql"
-        value={code}
+  return (
+    <Editor
+      height="300px"
+      theme="vs-dark"
+      options={{
+        readOnly: true,
+        domReadOnly: true,
+        minimap: {
+          enabled: false,
+        },
+      }}
+      onMount={handleEditorDidMount}
+      defaultLanguage="sql"
+      value={code}
     />
+  )
 }
