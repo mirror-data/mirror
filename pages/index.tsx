@@ -72,6 +72,9 @@ export default () => {
 
   const [chooseRepoModal, setChooseRepoModal] = useState<boolean>(false)
 
+  const help = userOrRepo === "hacker" ? ` my name is ${user.name}, github_events.actor_id equal ${user.id}` : `repo_id equal ${repo.id}`
+  const fullQuestion = `${help}, ${question}`
+
   const onSearch = () => {
     setSummary(INITIAL_SUMMARY_STATUS)
     setData(INITIAL_DATA_STATUS)
@@ -79,13 +82,12 @@ export default () => {
 
     setSqlStatus(setLoading(sqlStatus))
     const fn = async () => {
-      const help = userOrRepo === "hacker" ? ` github_events.actor_id equal ${user.id}` : `repo_id equal ${repo.id}`
 
-      const res = await fetchSQL(`${help}, ${question}`)
+      const res = await fetchSQL(fullQuestion)
       setSqlStatus(res)
       if (!res.error && res.sql) {
         const dataStatus = await loadData(res.sql, setData)
-        loadSummary(question, dataStatus.columns, dataStatus.rows, setSummary)
+        loadSummary(fullQuestion, dataStatus.columns, dataStatus.rows, setSummary)
         loadChart(dataStatus.columns, dataStatus.rows, setVega)
       }
     }
@@ -105,7 +107,7 @@ export default () => {
 
     const fn = async () => {
       const dataStatus = await loadData(sql, setData)
-      loadSummary(question, dataStatus.columns, dataStatus.rows, setSummary)
+      loadSummary(fullQuestion, dataStatus.columns, dataStatus.rows, setSummary)
       loadChart(dataStatus.columns, dataStatus.rows, setVega)
     }
     fn()
