@@ -18,6 +18,7 @@ const getVegaPrompt = ({columns, rows}:
 // D, CN, 53
 // =====================
 // your vega spec:
+// #START_SPEC#
 // {
 //   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 //   "description": "A simple bar chart with embedded data.",
@@ -38,6 +39,7 @@ const getVegaPrompt = ({columns, rows}:
 //     "color": {"field": "name", "type": "nominal"}
 //   }
 // }
+// #END_SPEC#
 
 
 
@@ -48,6 +50,7 @@ ${columns?.join(", ")}
 ${rows?.slice(0, 30).map(row => row.join(", ")).join("\n")}
 =====================
 your vega spec:
+#START_SPEC#
 `
 }
 

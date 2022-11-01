@@ -6,9 +6,10 @@ import DataTable from "@/components/v2/DataTable";
 import {Card} from "@/components/v2/Card";
 import {useAtom} from "jotai";
 import {
+  chartStatusAtom,
   dataStatusAtom, INIT_SQL,
   INITIAL_DATA_STATUS,
-  INITIAL_SUMMARY_STATUS,
+  INITIAL_SUMMARY_STATUS, loadChart,
   loadData,
   loadSummary,
   setLoading,
@@ -19,6 +20,7 @@ import {fetchSQL} from "@/components/v2/apis";
 import Head from "next/head";
 import ChooseRepo from "@/components/v2/ChooseRepo";
 import {IconBrandGithub, IconUser} from "@tabler/icons";
+import Chart from "@/components/v2/Chart";
 
 interface Repo {
   name: string
@@ -66,6 +68,7 @@ export default () => {
   const [sqlStatus, setSqlStatus] = useAtom(sqlStatusAtom)
   const [data, setData] = useAtom(dataStatusAtom)
   const [summary, setSummary] = useAtom(summaryStatusAtom)
+  const [vega, setVega] = useAtom(chartStatusAtom)
 
   const [chooseRepoModal, setChooseRepoModal] = useState<boolean>(false)
 
@@ -83,6 +86,7 @@ export default () => {
       if (!res.error && res.sql) {
         const dataStatus = await loadData(res.sql, setData)
         loadSummary(question, dataStatus.columns, dataStatus.rows, setSummary)
+        loadChart(dataStatus.columns, dataStatus.rows, setVega)
       }
     }
     fn()
@@ -102,10 +106,12 @@ export default () => {
     const fn = async () => {
       const dataStatus = await loadData(sql, setData)
       loadSummary(question, dataStatus.columns, dataStatus.rows, setSummary)
+      loadChart(dataStatus.columns, dataStatus.rows, setVega)
     }
     fn()
 
   }
+
 
   return <div style={{
     backgroundColor: "rgb(237 242 255 / 60%)",
@@ -208,32 +214,10 @@ export default () => {
               rows={data.rows}
             />
           </Card>
-          {/*<Paper className="grow" shadow="xs" p="md">*/}
-          {/*  <Chart config={*/}
-          {/*    {*/}
-          {/*      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",*/}
-          {/*      "description": "A simple bar chart with embedded data.",*/}
-          {/*      "data": {*/}
-          {/*        "values": [*/}
-          {/*          {"name": "A", "country": "USA", "count": 28},*/}
-          {/*          {"name": "A", "country": "CN", "count": 55},*/}
-          {/*          {"name": "B", "country": "USA", "count": 43},*/}
-          {/*          {"name": "C", "country": "USA", "count": 91},*/}
-          {/*          {"name": "D", "country": "DE", "count": 81},*/}
-          {/*          {"name": "D", "country": "CN", "count": 53}*/}
-          {/*        ]*/}
-          {/*      },*/}
-          {/*      "mark": "bar",*/}
-          {/*      "encoding": {*/}
-          {/*        "x": {"field": "country", "type": "nominal", "axis": {"labelAngle": 0}},*/}
-          {/*        "y": {"field": "count", "type": "quantitative"},*/}
-          {/*        "color": {"field": "name", "type": "nominal"}*/}
-          {/*      }*/}
-          {/*    }*/}
+          <Card error={vega.error} initialized={vega.initialized} isLoaded={vega.loading}>
+            <Chart config={vega.config}/>
 
-          {/*  }/>*/}
-
-          {/*</Paper>*/}
+          </Card>
         </div>
 
 

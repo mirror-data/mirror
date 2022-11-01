@@ -156,7 +156,9 @@ export const fetchVega = async (sqlData: SQLData) => {
       const v = await fn()
       console.log(v)
       if (typeof v === 'string') {
-        return JSON.parse(v)
+        return {
+          config: JSON.parse(v)
+        }
       }
     } catch (e) {
       console.log(`vega retry ${retry}`, e)
