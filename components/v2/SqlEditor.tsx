@@ -25,7 +25,7 @@ export default ({code, onChange}: { code: string, onChange: (v: string) => void 
       defaultLanguage="sql"
       value={code}
     />
-    <div className="absolute left-0 bottom-1 flex gap-2">
+    <div className="absolute right-0 top-0 bg-white flex gap-2">
       <Button variant="outline" size="xs"
               onClick={() => onChange(editorRef.current.editor.getModel().getValue())}>Manual Run</Button>
       {/*<Button variant="outline" size="xs">Edit</Button>*/}

@@ -1,4 +1,4 @@
-import {Autocomplete, Text, Button, Modal} from "@mantine/core";
+import {Autocomplete, Text, Button, Modal, Paper, Input} from "@mantine/core";
 import {useState} from "react";
 import SqlEditor from "@/components/v2/SqlEditor";
 import * as React from "react";
@@ -18,6 +18,7 @@ import {
 import {fetchSQL} from "@/components/v2/apis";
 import Head from "next/head";
 import ChooseRepo from "@/components/v2/ChooseRepo";
+import {IconBrandGithub, IconUser} from "@tabler/icons";
 
 interface Repo {
   name: string
@@ -107,15 +108,26 @@ export default () => {
   }
 
   return <div style={{
-    backgroundColor: "rgb(237 242 255 / 40%)",
-    backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%23E7F5FF'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E\")",
+    backgroundColor: "rgb(237 242 255 / 60%)",
+    backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%23e0eefb'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E\")",
   }} className="h-screen w-screen p-4 flex flex-col">
     <Head>
       <title>Mirror for OSSInsight</title>
       <link rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪞</text></svg>"/>
     </Head>
-    <div className="flex gap-2 p-4 bg-white pb-6 rounded-lg justify-between items-center">
+    {/*top 0, left 0 absoution */}
+    <div className="h-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500  left-0 right-0 top-0 absolute">
+      <Text align="center" color="white" weight={700}>
+        Mirror for OSSInsight. Powered by Mirror. <Text className="ml-4" component="span" underline size="xs" italic>
+        mirror-data.github.io
+      </Text>
+      </Text>
+
+
+    </div>
+
+    <Paper shadow="xl" className="flex gap-2 mt-4 p-4 bg-white pb-6 rounded-lg justify-between items-center">
       <Modal
         opened={chooseRepoModal}
         onClose={() => setChooseRepoModal(false)}
@@ -135,15 +147,19 @@ export default () => {
         }} onClose={() => setChooseRepoModal(false)}/>
       </Modal>
       <div className="flex gap-2 flex-grow ">
-        {userOrRepo === "repo" &&
-          <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
-            REPO:{repo.name}
-          </Button>}
+        <Input.Wrapper label="Hacker or Repo">
+          <Input
+            component="button"
+            icon={userOrRepo === "repo" ? <IconBrandGithub/> : <IconUser/>}
+            wrapperProps={{
+              leftIcon: userOrRepo === "repo" ? <IconBrandGithub/> : <IconUser/>,
+              variant: "outline",
+              color: "dark",
+              onClick: () => setChooseRepoModal(true)
+            }}>{userOrRepo === "repo" ? repo.name : user.name}</Input>
 
-        {userOrRepo === "hacker" &&
-          <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
-            HACKER:{user.name}
-          </Button>}
+        </Input.Wrapper>
+
 
         <Autocomplete
           filter={() => true}
@@ -158,7 +174,7 @@ export default () => {
       <Button className="mt-[24px] ml-4" variant="outline" onClick={onSearch}>
         Search
       </Button>
-    </div>
+    </Paper>
 
     <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading}
           className="item-center bg-white p-2 my-4 w-auto">

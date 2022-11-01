@@ -488,6 +488,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@tabler/icons@^1.109.0":
+  version "1.109.0"
+  resolved "https://registry.npmmirror.com/@tabler/icons/-/icons-1.109.0.tgz#11626c3fc097f2f70c4c197e4b9909fb05380752"
+  integrity sha512-B0YetE4pB6HY2Wa57v/LJ3NgkJzKYPze4U0DurIqPoKSptatKv2ga76FZSkO6EUpkYfHMtGPM6QjpJljfuCmAQ==
+
 "@types/clone@~2.1.1":
   version "2.1.1"
   resolved "https://registry.npmmirror.com/@types/clone/-/clone-2.1.1.tgz#9b880d0ce9b1f209b5e0bd6d9caa38209db34024"
