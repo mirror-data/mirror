@@ -26,12 +26,15 @@ interface Repo {
 
 
 const RepoQuestions = [
-  "Who created the first pull request of this repo?",
-  "Who closed the first issue?",
-  "Who is the latest stargazer?",
-  "Who reviewed the most of code?",
-  "Who contributed the most lines of code?",
-  "Who star/unstar this repo again and again...",
+  {value: "Who created the first pull request of this repo?", group: 'Created by OSSInsight'},
+  {value: "Who closed the first issue?", group: 'Created by OSSInsight'},
+  {value: "Who is the latest stargazer?", group: 'Created by OSSInsight'},
+  {value: "Who reviewed the most of code?", group: 'Created by OSSInsight'},
+  {value: "Who contributed the most lines of code?", group: 'Created by OSSInsight'},
+  {value: "Who star/unstar this repo again and again...", group: 'Created by OSSInsight'},
+  {value: "Who is the most active contributor?", group: 'Created by AI'},
+  {value: "Who is the most active reviewer?", group: 'Created by AI'},
+
 ]
 
 const UserQuestions = [
@@ -146,7 +149,7 @@ export default () => {
           filter={() => true}
           className="flex-grow"
           label="Your Question"
-          limit={8}
+          limit={10}
           value={question} onChange={(v) => setQuestion(v)}
           data={userOrRepo === "repo" ? RepoQuestions : UserQuestions}/>
       </div>
