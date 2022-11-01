@@ -1,8 +1,8 @@
 import {Autocomplete, Text, Button, Modal} from "@mantine/core";
 import {useState} from "react";
-import SqlEditor from "@/components/SqlEditor";
+import SqlEditor from "@/components/v2/SqlEditor";
 import * as React from "react";
-import DataTable from "@/components/DataTable";
+import DataTable from "@/components/v2/DataTable";
 import {Card} from "@/components/v2/Card";
 import {useAtom} from "jotai";
 import {
@@ -29,6 +29,12 @@ export default () => {
     name: "PingCAP/TiDB",
     id: "41986369"
   })
+  const [userOrRepo, setUserOrRepo] = useState<string>("repo")
+
+  const [user, setUser] = useState<Repo>({
+    name: "c4pt0r",
+    id: "773853"
+  })
 
   const [question, setQuestion] = useState<string>("Who created the first pull request of this repo?")
   const [sqlStatus, setSqlStatus] = useAtom(sqlStatusAtom)
@@ -44,7 +50,9 @@ export default () => {
 
     setSqlStatus(setLoading(sqlStatus))
     const fn = async () => {
-      const res = await fetchSQL(`repo_id equal ${repo.id},${question}`)
+      const help = userOrRepo === "hacker" ? ` github_events.actor_id equal ${user.id}` : `repo_id equal ${repo.id}`
+
+      const res = await fetchSQL(`${help}, ${question}`)
       setSqlStatus(res)
       if (!res.error && res.sql) {
         const dataStatus = await loadData(res.sql, setData)
@@ -86,14 +94,29 @@ export default () => {
       <Modal
         opened={chooseRepoModal}
         onClose={() => setChooseRepoModal(false)}
-        title="Introduce yourself!"
+        title="Repo or Hacker?"
       >
-        <ChooseRepo setRepo={(id, name) => setRepo({id, name})} onClose={() => setChooseRepoModal(false)}/>
+        <ChooseRepo setRepo={(type, id, name) => {
+          if (type === "hacker") {
+            setUserOrRepo("hacker")
+            setUser({id, name})
+          } else {
+            setUserOrRepo("repo")
+            setRepo({id, name})
+          }
+
+        }} onClose={() => setChooseRepoModal(false)}/>
       </Modal>
       <div className="flex gap-2 flex-grow ">
-        <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
-          {repo.name}
-        </Button>
+        {userOrRepo === "repo" &&
+          <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
+            REPO:{repo.name}
+          </Button>}
+
+        {userOrRepo === "hacker" &&
+          <Button className="mt-[24px]" variant="outline" color="dark" onClick={() => setChooseRepoModal(true)}>
+            HACKER:{user.name}
+          </Button>}
 
         <Autocomplete
           filter={() => true}
@@ -116,10 +139,11 @@ export default () => {
       </Button>
     </div>
 
-    <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading} className="item-center bg-white p-2 my-4 w-auto">
-      <Text  align="center"
+    <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading}
+          className="item-center bg-white p-2 my-4 w-auto">
+      <Text align="center"
             variant="gradient"
-            gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+            gradient={{from: 'indigo', to: 'cyan', deg: 45}}
             size="xl"
             weight={700}>
         The following content was automatically collected and created by AI. No presets.

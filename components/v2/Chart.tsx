@@ -2,7 +2,6 @@ import {Vega} from "react-vega";
 import {Handler} from 'vega-tooltip';
 import dynamic from "next/dynamic";
 import React from "react";
-import {useResizeObserver} from "@mantine/hooks";
 
 interface ChartProps {
   config: any

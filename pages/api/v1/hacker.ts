@@ -6,7 +6,7 @@ export default async function handler(
   res: NextApiResponse<SQLResponse | SQLErrResponse>
 ) {
 
-  fetch(`https://api.ossinsight.io/gh/repos/search?keyword=${req.query.keyword || 'recommend-repo-list-1-keyword'}`)
+  fetch(`https://api.ossinsight.io/gh/users/search?keyword=${req.query.keyword || 'recommend-user-list-keyword'}`)
     .then(res => res.json())
     .then(data => {
       res.status(200).json(data)

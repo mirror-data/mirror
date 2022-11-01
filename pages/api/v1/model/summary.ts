@@ -10,7 +10,9 @@ ${columns?.join(", ")}
 ${rows?.slice(0, 30).map(row => row.join(", ")).join("\n")}
 ---
 Question: ${question}?
-Summary for a CEO: 
+Generate a report based on the questions and data.
+---
+Report: 
 `
 }
 

@@ -1,11 +1,14 @@
 import {format} from "sql-formatter";
-import {SQLData} from "@/state/question";
 import {CopilotResponse} from "@/utils/models/copilot";
 import {ErrorResponse} from "./response";
 import {SQLResponse} from "@/pages/api/v1/query";
 import {AnswerResponse} from "@/pages/api/v1/model/summary";
 import {EditResponse} from "@/pages/api/v1/model/edit";
 
+export interface SQLData {
+  columns: string[]
+  rows: string[][]
+}
 async function verify<T>(res: Response) {
   if (!res.ok) {
     return {

@@ -1,11 +1,11 @@
 import {format} from "sql-formatter";
-import {SQLData} from "@/state/question";
 import {CopilotResponse} from "@/utils/models/copilot";
 import {SQLResponse} from "@/pages/api/v1/query";
 import {AnswerResponse} from "@/pages/api/v1/model/summary";
 import {EditResponse} from "@/pages/api/v1/model/edit";
 import {ErrorResponse} from "@/utils/response";
 import {DataState, SqlState, SummaryState} from "@/components/v2/state";
+import {SQLData} from "@/utils/apis";
 
 async function verify<T>(res: Response) {
   if (!res.ok) {
@@ -32,11 +32,6 @@ function checkResponse<T>(raw: ErrorResponse | T) {
   return {
     data: raw as T
   }
-}
-
-interface fetchSQLResponse {
-  sql: string
-  error?: string
 }
 
 const isDone = {
@@ -66,8 +61,11 @@ export const fetchSQL = async (question: string): Promise<SqlState> => {
   if (!sql.startsWith('SELECT')) {
     sql = 'SELECT ' + sql
   }
-  sql = sql.split(';')[0] + ";"
+  sql = sql.split(';')[0]
 
+  if (!sql.includes('LIMIT')) {
+    sql += ' LIMIT 100'
+  }
 
   return {
     ...isDone,

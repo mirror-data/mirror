@@ -1,4 +1,4 @@
-import {List, LoadingOverlay, TextInput} from "@mantine/core"
+import {List, LoadingOverlay, SegmentedControl, TextInput} from "@mantine/core"
 import {useEffect, useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 
@@ -7,41 +7,53 @@ const Icon = ({src}: { src: string }) => {
 }
 
 
-export default ({setRepo, onClose}: {setRepo: (id:string, name: string)=>void, onClose: ()=>void}) => {
+export default ({setRepo, onClose}: {setRepo: (type: string, id:string, name: string)=>void, onClose: ()=>void}) => {
   const [name, setName] = useState<string>("")
   const [debounced] = useDebouncedValue(name, 200);
   const [data, setData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [type, setType] = useState('repo');
 
   useEffect(() => {
     setIsLoading(true)
-    const v = (debounced && debounced.length > 0) ? debounced : "recommend-repo-list-1-keyword"
-    fetch(`/api/v1/repo?keyword=${v}`)
+    fetch(`/api/v1/${type}?keyword=${debounced}`)
       .then(res => res.json())
       .then(res => {
         setIsLoading(false)
         setData(res?.data ?? [])
       })
 
-  }, [debounced])
-
+  }, [debounced, type])
 
   return <>
-    <TextInput value={name} onChange={e => setName(e.currentTarget.value)} placeholder="Search for a repo"/>
+    <div className="flex">
+      <SegmentedControl
+        size="sm"
+        className="mr-3"
+        value={type}
+        onChange={setType}
+        data={[
+          { label: 'Repo', value: 'repo' },
+          { label: 'Hacker', value: 'hacker' },
+        ]}
+      />
+      <TextInput value={name} onChange={e => setName(e.currentTarget.value)} placeholder={`Search for a ${type}`}/>
+
+    </div>
 
     <List className="mt-6 relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       {data.map((item: any) => {
-        const name = item.fullName
+        const name = item.fullName || item.login
         return <List.Item
           key={item.id}
           className="p-2 hover:bg-gray-100 cursor-pointer"
           onClick={() => {
-            setRepo(item.id, name)
+            setRepo(type, item.id, name)
             onClose()
           }}
           icon={<Icon src={`https://github.com/${name.split("/")[0]}.png`}/>}>
-          {item?.fullName}
+          {name}
         </List.Item>
       })}
     </List>
