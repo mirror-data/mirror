@@ -24,6 +24,28 @@ interface Repo {
   id: string
 }
 
+
+const RepoQuestions = [
+  "Who created the first pull request of this repo?",
+  "Who closed the first issue?",
+  "Who is the latest stargazer?",
+  "Who reviewed the most of code?",
+  "Who contributed the most lines of code?",
+  "Who star/unstar this repo again and again...",
+]
+
+const UserQuestions = [
+  {value: "What is the latest repo I created?", group: 'Created by AI'},
+  {value: "What is the latest repo I starred?", group: 'Created by AI'},
+  {value: "What is the latest repo I forked?", group: 'Created by AI'},
+  {value: "What is the latest repo I contributed?", group: 'Created by AI'},
+  {value: "What is the latest repo I reviewed?", group: 'Created by AI'},
+  {value: "What is the latest repo I closed an issue?", group: 'Created by AI'},
+  {value: "What is the latest repo I created an issue?", group: 'Created by AI'},
+  {value: "What is the latest repo I created a pull request?", group: 'Created by AI'},
+  {value: "What is the latest repo I merged a pull request?", group: 'Created by AI'},
+]
+
 export default () => {
   const [repo, setRepo] = useState<Repo>({
     name: "PingCAP/TiDB",
@@ -100,9 +122,11 @@ export default () => {
           if (type === "hacker") {
             setUserOrRepo("hacker")
             setUser({id, name})
+            setQuestion(UserQuestions[0].value)
           } else {
             setUserOrRepo("repo")
             setRepo({id, name})
+            setQuestion(RepoQuestions[0].value)
           }
 
         }} onClose={() => setChooseRepoModal(false)}/>
@@ -122,15 +146,9 @@ export default () => {
           filter={() => true}
           className="flex-grow"
           label="Your Question"
+          limit={8}
           value={question} onChange={(v) => setQuestion(v)}
-          data={[
-            "Who created the first pull request of this repo?",
-            "Who closed the first issue?",
-            "Who is the latest stargazer?",
-            "Who reviewed the most of code?",
-            "Who contributed the most lines of code?",
-            "Who star/unstar this repo again and again...",
-          ]}/>
+          data={userOrRepo === "repo" ? RepoQuestions : UserQuestions}/>
       </div>
 
 
@@ -143,10 +161,10 @@ export default () => {
           className="item-center bg-white p-2 my-4 w-auto">
       <Text align="center"
             variant="gradient"
-            gradient={{from: 'indigo', to: 'cyan', deg: 45}}
+            gradient={{from: 'violet', to: 'green', deg: 45}}
             size="xl"
             weight={700}>
-        The following content was automatically collected and created by AI. No presets.
+        The following content was automatically collected and created by Mirror-AI. No presets.
       </Text>
     </Card>
 
