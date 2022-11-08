@@ -1,7 +1,6 @@
 import {Group, Paper, Stepper, Text, useMantineTheme} from "@mantine/core";
 import {Dropzone, FileWithPath, MIME_TYPES} from "@mantine/dropzone";
 import {IconPhoto, IconUpload, IconX} from "@tabler/icons";
-import {SchemaView} from "@/components/SchemaView";
 import * as React from "react";
 import {useState} from "react";
 
@@ -65,8 +64,8 @@ export const DatasetContainer = () => {
         </Dropzone>
 
 
-        {files.map((file, index) => <SchemaView file={file}/>
-        )}
+        {/*{files.map((file, index) => <SchemaView file={file}/>*/}
+        {/*)}*/}
       </div>
 
     </Paper>
