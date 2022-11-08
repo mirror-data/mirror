@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@types/node": "17.0.35",
+    "@types/pg": "^8.6.5",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
     "@types/sql.js": "^1.4.4",
