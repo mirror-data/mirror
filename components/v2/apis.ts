@@ -154,7 +154,6 @@ export const fetchVega = async (sqlData: SQLData) => {
   while (retry < 10) {
     try {
       const v = await fn()
-      console.log(v)
       if (typeof v === 'string') {
         return {
           config: JSON.parse(v)
