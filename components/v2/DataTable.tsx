@@ -2,7 +2,7 @@ import { Table } from '@mantine/core';
 
 export default function DataTable({columns, rows}: { columns: string[], rows: string[][] }) {
   return (
-    <div className="overflow-auto max-h-[500px]">
+    <div className="overflow-auto max-h-[500px] font-mono">
       <Table striped highlightOnHover>
         <thead>
         <tr>

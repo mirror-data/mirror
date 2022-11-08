@@ -30,7 +30,7 @@ export default ({code, onChange}: { code: string, onChange: (v: string) => void 
       </Button>
     </Modal>
     <Editor
-      width="800px"
+      width="500px"
       options={{
         minimap: {
           enabled: false

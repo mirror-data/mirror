@@ -118,7 +118,6 @@ export const loadChart = async (columns: string[],
       initialized: true,
       loading: false,
     })
-    console.log("?", res)
   }
   fn()
 }

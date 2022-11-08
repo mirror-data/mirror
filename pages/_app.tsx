@@ -5,6 +5,7 @@ import { MantineProvider } from '@mantine/core';
 
 function MyApp({Component, pageProps}: AppProps) {
   return <MantineProvider withGlobalStyles withNormalizeCSS>
+    <script src="/jswasm/sqlite3-worker1-promiser.js"></script>
     <Component {...pageProps} />
     <Analytics/>
   </MantineProvider>
