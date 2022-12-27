@@ -1,12 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {SQLData} from "@/utils/apis";
-import * as pg from 'pg'
-import {Sequelize} from "sequelize-cockroachdb";
-import {getValueFromEnv} from "@/utils/env";
 
-const sequelize = new Sequelize(getValueFromEnv("PG_URL"));
-
+const mysql = require('serverless-mysql')({
+  backoff: 'decorrelated',
+  base: 5,
+  cap: 200
+})
+mysql.config({
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT
+})
 
 export interface SQLResponse extends SQLData {
 }
@@ -17,17 +24,14 @@ export interface SQLErrResponse {
 
 export default async function handler(
   req: NextApiRequest,
-  // res: NextApiResponse<SQLResponse | SQLErrResponse>
-  res: NextApiResponse
+  res: NextApiResponse<SQLResponse | SQLErrResponse>
 ) {
 
   try {
-    const [_results, metadata] = await sequelize.query(req.body.sql)
-    const results = _results as object[]
+    let results = await mysql.query(req.body.sql)
     if (!results || results.length === 0) {
-      res.status(200).json({error: 'No results'})
+      return res.status(200).json({error: "No results"})
     }
-
     const columns = Object.keys(results[0]) || []
     if (columns.length === 0) {
       return res.status(200).json({error: "No results"})

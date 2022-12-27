@@ -8,7 +8,12 @@ interface ChartProps {
 }
 
 const Chart: React.FC<ChartProps> = ({config}) => {
-  return <Vega spec={config} tooltip={new Handler().call}/>
+
+  return <div ><Vega spec={{
+    ...config,
+    width: 500
+  }} tooltip={new Handler().call}/>
+  </div>
 }
 const NoSSR = dynamic(() => Promise.resolve(Chart), {
   ssr: false

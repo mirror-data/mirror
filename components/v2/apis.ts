@@ -1,14 +1,12 @@
 import {format} from "sql-formatter";
 import {CopilotResponse} from "@/utils/models/copilot";
-import {ErrorResponse} from "./response";
 import {SQLResponse} from "@/pages/api/v1/query";
 import {AnswerResponse} from "@/pages/api/v1/model/summary";
 import {EditResponse} from "@/pages/api/v1/model/edit";
+import {ErrorResponse} from "@/utils/response";
+import {DataState, SqlState, SummaryState} from "@/components/v2/state";
+import {SQLData} from "@/utils/apis";
 
-export interface SQLData {
-  columns: string[]
-  rows: string[][]
-}
 async function verify<T>(res: Response) {
   if (!res.ok) {
     return {
@@ -36,11 +34,10 @@ function checkResponse<T>(raw: ErrorResponse | T) {
   }
 }
 
-interface fetchSQLResponse {
-  sql: string
-  error?: string
+const isDone = {
+  initialized: true, loading: false,
 }
-export const fetchSQL = async (question: string): Promise<fetchSQLResponse> => {
+export const fetchSQL = async (question: string): Promise<SqlState> => {
   const res = await fetch(`/api/v1/model/sql`, {
     method: 'POST',
     headers: {
@@ -53,8 +50,9 @@ export const fetchSQL = async (question: string): Promise<fetchSQLResponse> => {
   let {error, data} = await verify<CopilotResponse>(res)
   if (error || !data) {
     return {
-      error,
       sql: "",
+      ...isDone,
+      error
     }
   }
   const choice = data.choices[0]
@@ -63,12 +61,19 @@ export const fetchSQL = async (question: string): Promise<fetchSQLResponse> => {
   if (!sql.startsWith('SELECT')) {
     sql = 'SELECT ' + sql
   }
+  sql = sql.split(';')[0]
+
+  if (!sql.includes('LIMIT')) {
+    sql += ' LIMIT 100'
+  }
+
   return {
-    sql: format(sql),
+    ...isDone,
+    sql: format(sql)
   }
 }
 
-export const fetchData = async (sql: string) => {
+export const fetchData = async (sql: string): Promise<DataState> => {
   const res = await fetch(`/api/v1/query`, {
     method: 'POST',
     headers: {
@@ -82,19 +87,20 @@ export const fetchData = async (sql: string) => {
   let {error, data} = await verify<SQLResponse>(res)
   if (error || !data) {
     return {
-      error,
+      columns: [], rows: [],
+      ...isDone,
+      error
     }
   }
 
   const {columns, rows} = data
   return {
-    data: {
-      columns,
-      rows
-    }
+    ...isDone,
+    columns,
+    rows
   }
 }
-export const fetchSummary= async (question: string, sqlData: SQLData) => {
+export const fetchSummary = async (question: string, sqlData: SQLData): Promise<SummaryState> => {
   const res = await fetch(`/api/v1/model/summary`, {
     method: 'POST',
     headers: {
@@ -110,12 +116,15 @@ export const fetchSummary= async (question: string, sqlData: SQLData) => {
   let {error, data} = await verify<AnswerResponse>(res)
   if (error || !data) {
     return {
+      ...isDone,
       error,
+      summary: ""
     }
   }
 
   return {
-    text: data.text
+    ...isDone,
+    summary: data.text
   }
 
 }
@@ -145,9 +154,10 @@ export const fetchVega = async (sqlData: SQLData) => {
   while (retry < 10) {
     try {
       const v = await fn()
-      console.log(v)
       if (typeof v === 'string') {
-        return JSON.parse(v)
+        return {
+          config: JSON.parse(v)
+        }
       }
     } catch (e) {
       console.log(`vega retry ${retry}`, e)
