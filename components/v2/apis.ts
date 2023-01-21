@@ -192,3 +192,57 @@ export const fetchEdit = async (sql: string, question: string, instruction: stri
     sql: format(data.sql),
   }
 }
+
+export const fetchSuggestions = async (input: string) => {
+  const fn = async () => {
+    const res = await fetch(`/api/v1/model/autocomplete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        input
+      })
+    })
+    const {error, data} = await verify<CopilotResponse>(res)
+    if (error || !data) {
+      return {
+        error,
+      }
+    }
+    return  {
+      suggestions: data.choices[0].text.trim()
+    }
+
+  }
+
+
+  let retry = 0
+  while (retry < 10) {
+    const suggest = await fn()
+    try {
+
+      if (suggest.suggestions) {
+      //  if first line start with "SUGGESTIONS: "
+        if (suggest.suggestions.startsWith("SUGGESTIONS: ")) {
+          const raw = suggest.suggestions.split("SUGGESTIONS: ")[1].split("\n")[0]
+          return {
+            suggestions: JSON.parse(raw)
+          }
+        }
+
+      }
+
+
+
+    } catch (e) {
+      console.log(`suggestions retry ${retry}`, e, suggest?.suggestions?.split("\n")[0])
+    }
+    retry++
+  }
+  return {
+    error: 'Failed to fetch vega'
+  }
+
+
+}

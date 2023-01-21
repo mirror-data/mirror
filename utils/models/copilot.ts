@@ -19,7 +19,7 @@ class Copilot {
     this.token = "tid=0;expired=0"
   }
 
-  async getCompletion(prompt: string, max: number): Promise<CopilotResponse | ErrorResponse> {
+  async getCompletion(prompt: string, max: number, temperature: number = 0.3): Promise<CopilotResponse | ErrorResponse> {
     const start = Date.now()
     const tokenExpires = parseInt(this.token.split(";")[1].split("=")[1])
     if (tokenExpires - 10 < (start / 1000)) {
@@ -48,7 +48,7 @@ class Copilot {
             "#",
             "---",
           ],
-          "temperature": 0.3,
+          temperature,
           "max_tokens": max ?? 400,
           "top_p": 0.4,
           "n": 1,

@@ -1,6 +1,5 @@
-import {ActionIcon, Autocomplete, Button, Code, Input, Modal, Paper, Space, Text, Textarea} from "@mantine/core";
-import ChooseRepo from "@/components/v2/ChooseRepo";
-import {IconAdjustments, IconBrandGithub, IconUser} from "@tabler/icons";
+import {ActionIcon, Button, Code, Modal, Paper, Space, Text, Textarea} from "@mantine/core";
+import {IconAdjustments} from "@tabler/icons";
 import {Card} from "@/components/v2/Card";
 import SqlEditor from "@/components/v2/SqlEditor";
 import DataTable from "@/components/v2/DataTable";
@@ -16,51 +15,10 @@ import {
   summaryStatusAtom
 } from "@/components/v2/state";
 import {fetchSQL} from "@/components/v2/apis";
-
-
-
-interface Repo {
-  name: string
-  id: string
-}
-
-
-const RepoQuestions = [
-  {value: "Who created the first pull request of this repo?", group: 'Created by OSSInsight'},
-  {value: "Who closed the first issue?", group: 'Created by OSSInsight'},
-  {value: "Who is the latest stargazer?", group: 'Created by OSSInsight'},
-  {value: "Who reviewed the most of code?", group: 'Created by OSSInsight'},
-  {value: "Who contributed the most lines of code?", group: 'Created by OSSInsight'},
-  {value: "Who star/unstar this repo again and again...", group: 'Created by OSSInsight'},
-  {value: "Who is the most active contributor?", group: 'Created by AI'},
-  {value: "Who is the most active reviewer?", group: 'Created by AI'},
-
-]
-
-const UserQuestions = [
-  {value: "What is the latest repo I created?", group: 'Created by AI'},
-  {value: "What is the latest repo I starred?", group: 'Created by AI'},
-  {value: "What is the latest repo I forked?", group: 'Created by AI'},
-  {value: "What is the latest repo I contributed?", group: 'Created by AI'},
-  {value: "What is the latest repo I reviewed?", group: 'Created by AI'},
-  {value: "What is the latest repo I closed an issue?", group: 'Created by AI'},
-  {value: "What is the latest repo I created an issue?", group: 'Created by AI'},
-  {value: "What is the latest repo I created a pull request?", group: 'Created by AI'},
-  {value: "What is the latest repo I merged a pull request?", group: 'Created by AI'},
-]
+import {QuestionInput} from "@/components/QuestionInput";
 
 
 export const Question: React.FC = () => {
-  const [repo, setRepo] = useState<Repo>({
-    name: "PingCAP/TiDB",
-    id: "41986369"
-  })
-  const [userOrRepo, setUserOrRepo] = useState<string>("repo")
-
-  const [user, setUser] = useState<Repo>({
-    name: "c4pt0r",
-    id: "773853"
-  })
 
   const [question, setQuestion] = useState<string>("Who are the top 3 scorers of Warriors?")
   const [sqlStatus, setSqlStatus] = useAtom(sqlStatusAtom)
@@ -191,13 +149,7 @@ tips: if question use team nickname, use table Teams to find the team_id.
       </Modal>
 
       <div className="flex gap-2 flex-grow ">
-        <Autocomplete
-          filter={() => true}
-          className="flex-grow"
-          label="Your Question"
-          limit={10}
-          value={question} onChange={(v) => setQuestion(v)}
-          data={[]}/>
+        <QuestionInput value={question} setValue={setQuestion} autocomplete={true}/>
 
 
       </div>
@@ -210,7 +162,7 @@ tips: if question use team nickname, use table Teams to find the team_id.
       <ActionIcon className="absolute bottom-0 right-0"
                   onClick={() => setConfigModal(true)}
                   variant="transparent">
-        <IconAdjustments size={18} />
+        <IconAdjustments size={18}/>
       </ActionIcon>
     </Paper>
 
@@ -224,7 +176,7 @@ tips: if question use team nickname, use table Teams to find the team_id.
         The following content was automatically collected and created by MirrorData. No presets.
       </Text>
     </Card>
-    <Space  h="lg"/>
+    <Space h="lg"/>
 
     <div className="flex flex-col gap-6 grow">
 
