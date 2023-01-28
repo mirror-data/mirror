@@ -1,4 +1,4 @@
-import {ActionIcon, Button, Code, Modal, Paper, Space, Text, Textarea} from "@mantine/core";
+import {ActionIcon, Button, Code, Modal, Paper, Space, Textarea} from "@mantine/core";
 import {IconAdjustments} from "@tabler/icons";
 import {Card} from "@/components/v2/Card";
 import SqlEditor from "@/components/v2/SqlEditor";
@@ -166,16 +166,16 @@ tips: if question use team nickname, use table Teams to find the team_id.
       </ActionIcon>
     </Paper>
 
-    <Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading}
-          className="item-center bg-white p-2 my-4 w-auto">
-      <Text align="center"
-            variant="gradient"
-            gradient={{from: 'violet', to: 'green', deg: 45}}
-            size="xl"
-            weight={700}>
-        The following content was automatically collected and created by MirrorData. No presets.
-      </Text>
-    </Card>
+    {/*<Card error={sqlStatus.error} initialized={sqlStatus.initialized} isLoaded={sqlStatus.loading}*/}
+    {/*      className="item-center bg-white p-2 my-4 w-auto">*/}
+    {/*  <Text align="center"*/}
+    {/*        variant="gradient"*/}
+    {/*        gradient={{from: 'violet', to: 'green', deg: 45}}*/}
+    {/*        size="xl"*/}
+    {/*        weight={700}>*/}
+    {/*    The following content was automatically collected and created by MirrorData. No presets.*/}
+    {/*  </Text>*/}
+    {/*</Card>*/}
     <Space h="lg"/>
 
     <div className="flex flex-col gap-6 grow">

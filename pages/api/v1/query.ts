@@ -1,11 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {SQLData} from "@/utils/apis";
-import * as pg from 'pg'
+import * as pg from 'pg';
 import {Sequelize} from "sequelize-cockroachdb";
 import {getValueFromEnv} from "@/utils/env";
-
-const sequelize = new Sequelize(getValueFromEnv("PG_URL"));
+const sequelize = new Sequelize(getValueFromEnv("PG_URL"), {
+  dialectModule: pg
+});
 
 
 export interface SQLResponse extends SQLData {
