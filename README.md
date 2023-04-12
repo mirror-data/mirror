@@ -87,3 +87,7 @@ Please cite the repo if you use the code in this repo.
 - [Canwen Xu](https://www.canwenxu.net/)
 - [Julian McAuley](https://cseweb.ucsd.edu/~jmcauley/)
 - [Penghan Wang](https://github.com/wph95)
+
+## Acknowledgments
+
+Mirror was a participating and award-winning project at PingCAP TiDB Hackathon 2022. We would like to thank PingCAP, Inc. for the generous awards and support. The intellectual property of OSS Insight (including but not limited to its Mirror integration) is owned by PingCAP, Inc.
