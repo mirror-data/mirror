@@ -6,7 +6,13 @@ Mirror is a project that aims to build and share a natural language interface fo
 
 ## Overview
 
-Data exploration and analysis are critical tasks for organizations, but can be challenging due to technical expertise requirements and complex tools. Mirror is an open-source platform for data exploration and analysis powered by large language and code models, GPT-3 and Codex. It offers an intuitive natural language interface for querying databases, automatically generates SQL commands, and provides visualizations for data understanding. Mirror is designed to be flexible and suitable for both experienced data analysts and non-technical professionals. It is a "plug-and-play" tool that leverages pretrained models, eliminating the need for annotated data. The platform is demonstrated through two use cases: automatic question answering for sports with real-time updates, and OSS Insight Data Explorer for open-source event analysis. Future work includes exploring dialogue-based multi-round query to improve self-correction ability and user interaction through a dialogue-like interface, by combining ChatGPT and the SQL engine.
+Data exploration and analysis are critical tasks for organizations, but can be challenging due to technical expertise requirements and complex tools. 
+
+Mirror is an open-source platform for data exploration and analysis powered by large language and code models, GPT-3 and Codex. It offers an intuitive natural language interface for querying databases, automatically generates SQL commands, and provides visualizations for data understanding. 
+
+Mirror is designed to be flexible and suitable for both experienced data analysts and non-technical professionals. It is a "plug-and-play" tool that leverages pretrained models, eliminating the need for annotated data. The platform is demonstrated through two use cases: automatic question answering for sports with real-time updates, and OSS Insight Data Explorer for open-source event analysis. 
+
+Future work includes exploring dialogue-based multi-round query to improve self-correction ability and user interaction through a dialogue-like interface, by combining ChatGPT and the SQL engine.
 
 ## Development
 
