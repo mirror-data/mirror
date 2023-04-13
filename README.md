@@ -1,4 +1,6 @@
-# 🪞 [Mirror](https://mirror-data.github.io/)
+<h1 align="center"><a href="https://mirror-data.github.io/">🪞 Mirror </a> </h1>
+<p align="center"><a href="https://arxiv.org/abs/2303.08697">[📄 Paper]</a> | <a href="https://mirror-data.github.io/">[🏠 Website]</a> </p>
+<hr>
 
 ### A Natural Language Interface for Data Querying, Summarization, and Visualization
 
@@ -12,7 +14,12 @@ Mirror is an open-source platform for data exploration and analysis powered by l
 
 Mirror is designed to be flexible and suitable for both experienced data analysts and non-technical professionals. It is a "plug-and-play" tool that leverages pretrained models, eliminating the need for annotated data. The platform is demonstrated through two use cases: automatic question answering for sports with real-time updates, and OSS Insight Data Explorer for open-source event analysis. 
 
+The components and workflow of Mirror in the data query stage. The red dashed lines indicate human-in-the-loop components that can allow user interaction or editing. Query auto-completion with metadata is omitted
+
+![Flow](./docs/flow.jpg)
+
 Future work includes exploring dialogue-based multi-round query to improve self-correction ability and user interaction through a dialogue-like interface, by combining ChatGPT and the SQL engine.
+
 
 ## Development
 
